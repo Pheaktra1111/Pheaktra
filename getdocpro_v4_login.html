@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GetDocPro — Free CV Maker</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#08060d;color:#fff;font-family:Arial,sans-serif}.wrap{width:min(1100px,92%);margin:auto}
+nav{height:70px;border-bottom:1px solid #29202f;display:flex;align-items:center;justify-content:space-between}.logo{font-size:23px;font-weight:800}.logo span{color:#b15cff}.nav button,.btn{border:1px solid #382b44;background:#130e19;color:#fff;padding:10px 15px;border-radius:9px;cursor:pointer;font-weight:700}.primary{background:linear-gradient(135deg,#8b5cf6,#c026d3);border:0}
+.hero{text-align:center;padding:65px 0 35px}.hero h1{font-size:clamp(38px,7vw,66px);margin:8px 0}.grad{background:linear-gradient(90deg,#c084fc,#e879f9);-webkit-background-clip:text;color:transparent}.muted{color:#9e94a8}
+.app{display:grid;grid-template-columns:390px 1fr;gap:18px;padding:20px 0 60px}.panel{background:#100b15;border:1px solid #2b2133;border-radius:18px;padding:20px}.panel h2{margin-top:0}.field{margin:13px 0}.field label{display:block;color:#c8c0cf;font-size:13px;margin-bottom:6px}.field input,.field textarea{width:100%;padding:11px;border-radius:8px;border:1px solid #382d42;background:#0a0710;color:#fff;outline:0}.field textarea{min-height:75px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.cv{background:#fff;color:#17131b;min-height:680px;padding:38px 42px;border-radius:8px;box-shadow:0 15px 50px #0008}.cv h1{font-size:34px;margin:0}.cv .job{color:#7c3aed;font-weight:bold;margin-top:4px}.line{height:2px;background:#eee;margin:18px 0}.cv h3{font-size:13px;letter-spacing:1.5px;color:#7c3aed;margin:20px 0 7px}.cv p{font-size:13px;white-space:pre-line;margin:5px 0;line-height:1.55}
+.pro{margin-top:18px;background:#160d20;border:1px solid #623c7c;border-radius:15px;padding:16px}.pro b{color:#d8b4fe}
+footer{text-align:center;border-top:1px solid #241b2c;padding:25px;color:#746b7d;font-size:13px}
+@media(max-width:850px){.app{grid-template-columns:1fr}.cv{min-height:500px}.hero{padding-top:45px}}
+@media(max-width:500px){.row{grid-template-columns:1fr}.cv{padding:25px 20px}.cv h1{font-size:27px}}
+@media print{body{background:#fff}.hero,nav,.editor,.pro,footer{display:none!important}.app{display:block;padding:0}.panel{border:0;padding:0}.cv{box-shadow:none;border-radius:0;min-height:0}}
+
+.auth{display:flex;gap:8px}.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.show{display:flex}.authbox{width:min(430px,100%);background:#100b15;border:1px solid #3a2948;border-radius:18px;padding:24px;box-shadow:0 25px 80px #000}.authbox h2{margin-top:0}.authbox input{width:100%;padding:12px;margin:7px 0 12px;border-radius:9px;border:1px solid #382d42;background:#0a0710;color:#fff}.authactions{display:flex;gap:8px}.close{float:right;cursor:pointer;color:#aaa}.userbar{display:none;background:#160d20;border:1px solid #3b2850;border-radius:12px;padding:10px 12px;margin:12px auto 0;width:min(1100px,92%);align-items:center;justify-content:space-between}.userbar.show{display:flex}
+</style>
+</head>
+<body>
+<nav><div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="logo">GetDoc<span>Pro</span></div><div class="auth"><button class="btn" onclick="openAuth('login')">Log in</button><button class="btn primary" onclick="openAuth('signup')">Sign up</button></div></div></nav>
+
+<div id="userbar" class="userbar"><span>👤 <b id="userEmail"></b> · Free account</span><button class="btn" onclick="logout()">Log out</button></div>
+<section class="hero wrap">
+<div class="muted">✦ Free AI-ready CV workspace</div>
+<h1>Create your CV with <span class="grad">GetDocPro.</span></h1>
+<p class="muted">Fill in your information and see your professional CV update instantly.</p>
+</section>
+
+<main id="builder" class="wrap app">
+<section class="editor">
+<div class="panel">
+<h2>CV Information</h2>
+<div class="field"><label>Full name</label><input id="name" placeholder="e.g. Pheaktra"></div>
+<div class="field"><label>Job title</label><input id="job" placeholder="e.g. Teacher Assistant"></div>
+<div class="row"><div class="field"><label>Email</label><input id="email" placeholder="you@email.com"></div><div class="field"><label>Phone</label><input id="phone" placeholder="+855 ..."></div></div>
+<div class="field"><label>Profile</label><textarea id="profile" placeholder="Short professional profile..."></textarea></div>
+<div class="field"><label>Education</label><textarea id="education" placeholder="School / Degree / Year"></textarea></div>
+<div class="field"><label>Experience</label><textarea id="experience" placeholder="Company / Role / Responsibilities"></textarea></div>
+<div class="field"><label>Skills</label><textarea id="skills" placeholder="Microsoft Office, Communication, ..."></textarea></div>
+<div class="actions"><button class="btn primary" onclick="window.print()">📥 Save / Print PDF</button><button class="btn" onclick="clearAll()">Clear</button></div>
+</div>
+<div class="pro"><b>✦ Pro coming soon</b><br><span class="muted">AI CV writing, premium templates and Word export will be added later.</span></div>
+</section>
+
+<section class="panel">
+<h2>Live Preview</h2>
+<div class="cv" id="cv">
+<h1 id="pname">Your Name</h1><div class="job" id="pjob">Professional Title</div>
+<p id="contact">email@example.com · +855 ...</p><div class="line"></div>
+<h3>PROFILE</h3><p id="pprofile">Your professional profile will appear here.</p>
+<h3>EDUCATION</h3><p id="peducation">Your education will appear here.</p>
+<h3>EXPERIENCE</h3><p id="pexperience">Your experience will appear here.</p>
+<h3>SKILLS</h3><p id="pskills">Your skills will appear here.</p>
+</div>
+</section>
+</main>
+<footer>© 2026 GetDocPro · Free CV Maker Prototype · Create. Improve. Translate.</footer>
+<div id="authModal" class="modal" onclick="if(event.target===this)closeAuth()"><div class="authbox"><span class="close" onclick="closeAuth()">✕</span><h2 id="authTitle">Create your account</h2><p class="muted" id="authSub">Sign up to save your GetDocPro account on this device.</p><label>Email</label><input id="authEmail" type="email" placeholder="you@email.com"><label>Password</label><input id="authPassword" type="password" placeholder="At least 6 characters"><div class="authactions"><button class="btn primary" id="authSubmit" onclick="submitAuth()">Sign up</button><button class="btn" onclick="closeAuth()">Cancel</button></div><p id="authMsg" class="muted" style="margin-bottom:0"></p><p class="muted" style="font-size:12px;margin-bottom:0">Prototype only: this demo stores account data in your browser. Real secure login/database will be connected later.</p></div></div>
+<script>
+const pairs=[['name','pname','Your Name'],['job','pjob','Professional Title'],['profile','pprofile','Your professional profile will appear here.'],['education','peducation','Your education will appear here.'],['experience','pexperience','Your experience will appear here.'],['skills','pskills','Your skills will appear here.']];
+pairs.forEach(([a,b,d])=>{document.getElementById(a).addEventListener('input',()=>document.getElementById(b).textContent=document.getElementById(a).value||d)});
+['email','phone'].forEach(x=>document.getElementById(x).addEventListener('input',updateContact));
+function updateContact(){let e=document.getElementById('email').value||'email@example.com',p=document.getElementById('phone').value||'+855 ...';document.getElementById('contact').textContent=e+' · '+p}
+function clearAll(){document.querySelectorAll('input,textarea').forEach(x=>x.value='');pairs.forEach(([a,b,d])=>document.getElementById(b).textContent=d);updateContact()}
+let authMode='signup';
+function openAuth(mode){authMode=mode;document.getElementById('authModal').classList.add('show');document.getElementById('authTitle').textContent=mode==='login'?'Welcome back':'Create your account';document.getElementById('authSub').textContent=mode==='login'?'Log in to your GetDocPro account on this device.':'Sign up to save your GetDocPro account on this device.';document.getElementById('authSubmit').textContent=mode==='login'?'Log in':'Sign up';document.getElementById('authMsg').textContent='';document.getElementById('authEmail').focus()}
+function closeAuth(){document.getElementById('authModal').classList.remove('show')}
+function submitAuth(){const e=document.getElementById('authEmail').value.trim().toLowerCase(),pw=document.getElementById('authPassword').value;if(!e||pw.length<6){document.getElementById('authMsg').textContent='Please enter a valid email and a password of at least 6 characters.';return}const saved=JSON.parse(localStorage.getItem('getdocpro_user')||'null');if(authMode==='signup'){localStorage.setItem('getdocpro_user',JSON.stringify({email:e,password:pw}));localStorage.setItem('getdocpro_session',e);showUser(e);closeAuth();alert('Account created on this device.')}else{if(!saved||saved.email!==e||saved.password!==pw){document.getElementById('authMsg').textContent='Email or password is incorrect on this device.';return}localStorage.setItem('getdocpro_session',e);showUser(e);closeAuth()}}
+function showUser(e){document.getElementById('userEmail').textContent=e;document.getElementById('userbar').classList.add('show')}
+function logout(){localStorage.removeItem('getdocpro_session');document.getElementById('userbar').classList.remove('show')}
+const session=localStorage.getItem('getdocpro_session');if(session)showUser(session);
+</script>
+</body>
+</html>
