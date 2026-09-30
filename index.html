@@ -14,11 +14,14 @@ footer{text-align:center;border-top:1px solid #241b2c;padding:25px;color:#746b7d
 @media(max-width:850px){.app{grid-template-columns:1fr}.cv{min-height:500px}.hero{padding-top:45px}}
 @media(max-width:500px){.row{grid-template-columns:1fr}.cv{padding:25px 20px}.cv h1{font-size:27px}}
 @media print{body{background:#fff}.hero,nav,.editor,.pro,footer{display:none!important}.app{display:block;padding:0}.panel{border:0;padding:0}.cv{box-shadow:none;border-radius:0;min-height:0}}
+
+.auth{display:flex;gap:8px}.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.show{display:flex}.authbox{width:min(430px,100%);background:#100b15;border:1px solid #3a2948;border-radius:18px;padding:24px;box-shadow:0 25px 80px #000}.authbox h2{margin-top:0}.authbox input{width:100%;padding:12px;margin:7px 0 12px;border-radius:9px;border:1px solid #382d42;background:#0a0710;color:#fff}.authactions{display:flex;gap:8px}.close{float:right;cursor:pointer;color:#aaa}.userbar{display:none;background:#160d20;border:1px solid #3b2850;border-radius:12px;padding:10px 12px;margin:12px auto 0;width:min(1100px,92%);align-items:center;justify-content:space-between}.userbar.show{display:flex}
 </style>
 </head>
 <body>
-<nav><div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="logo">GetDoc<span>Pro</span></div><button class="btn primary" onclick="document.getElementById('builder').scrollIntoView({behavior:'smooth'})">Create Free CV</button></div></nav>
+<nav><div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="logo">GetDoc<span>Pro</span></div><div class="auth"><button class="btn" onclick="openAuth('login')">Log in</button><button class="btn primary" onclick="openAuth('signup')">Sign up</button></div></div></nav>
 
+<div id="userbar" class="userbar"><span>👤 <b id="userEmail"></b> · Free account</span><button class="btn" onclick="logout()">Log out</button></div>
 <section class="hero wrap">
 <div class="muted">✦ Free AI-ready CV workspace</div>
 <h1>Create your CV with <span class="grad">GetDocPro.</span></h1>
@@ -53,13 +56,21 @@ footer{text-align:center;border-top:1px solid #241b2c;padding:25px;color:#746b7d
 </div>
 </section>
 </main>
-<footer>© 2026 GetDocPro · Free CV Maker Prototype · Create. Improve. Get Hired.</footer>
+<footer>© 2026 GetDocPro · Free CV Maker Prototype · Create. Improve. Translate.</footer>
+<div id="authModal" class="modal" onclick="if(event.target===this)closeAuth()"><div class="authbox"><span class="close" onclick="closeAuth()">✕</span><h2 id="authTitle">Create your account</h2><p class="muted" id="authSub">Sign up to save your GetDocPro account on this device.</p><label>Email</label><input id="authEmail" type="email" placeholder="you@email.com"><label>Password</label><input id="authPassword" type="password" placeholder="At least 6 characters"><div class="authactions"><button class="btn primary" id="authSubmit" onclick="submitAuth()">Sign up</button><button class="btn" onclick="closeAuth()">Cancel</button></div><p id="authMsg" class="muted" style="margin-bottom:0"></p><p class="muted" style="font-size:12px;margin-bottom:0">Prototype only: this demo stores account data in your browser. Real secure login/database will be connected later.</p></div></div>
 <script>
 const pairs=[['name','pname','Your Name'],['job','pjob','Professional Title'],['profile','pprofile','Your professional profile will appear here.'],['education','peducation','Your education will appear here.'],['experience','pexperience','Your experience will appear here.'],['skills','pskills','Your skills will appear here.']];
 pairs.forEach(([a,b,d])=>{document.getElementById(a).addEventListener('input',()=>document.getElementById(b).textContent=document.getElementById(a).value||d)});
 ['email','phone'].forEach(x=>document.getElementById(x).addEventListener('input',updateContact));
 function updateContact(){let e=document.getElementById('email').value||'email@example.com',p=document.getElementById('phone').value||'+855 ...';document.getElementById('contact').textContent=e+' · '+p}
 function clearAll(){document.querySelectorAll('input,textarea').forEach(x=>x.value='');pairs.forEach(([a,b,d])=>document.getElementById(b).textContent=d);updateContact()}
+let authMode='signup';
+function openAuth(mode){authMode=mode;document.getElementById('authModal').classList.add('show');document.getElementById('authTitle').textContent=mode==='login'?'Welcome back':'Create your account';document.getElementById('authSub').textContent=mode==='login'?'Log in to your GetDocPro account on this device.':'Sign up to save your GetDocPro account on this device.';document.getElementById('authSubmit').textContent=mode==='login'?'Log in':'Sign up';document.getElementById('authMsg').textContent='';document.getElementById('authEmail').focus()}
+function closeAuth(){document.getElementById('authModal').classList.remove('show')}
+function submitAuth(){const e=document.getElementById('authEmail').value.trim().toLowerCase(),pw=document.getElementById('authPassword').value;if(!e||pw.length<6){document.getElementById('authMsg').textContent='Please enter a valid email and a password of at least 6 characters.';return}const saved=JSON.parse(localStorage.getItem('getdocpro_user')||'null');if(authMode==='signup'){localStorage.setItem('getdocpro_user',JSON.stringify({email:e,password:pw}));localStorage.setItem('getdocpro_session',e);showUser(e);closeAuth();alert('Account created on this device.')}else{if(!saved||saved.email!==e||saved.password!==pw){document.getElementById('authMsg').textContent='Email or password is incorrect on this device.';return}localStorage.setItem('getdocpro_session',e);showUser(e);closeAuth()}}
+function showUser(e){document.getElementById('userEmail').textContent=e;document.getElementById('userbar').classList.add('show')}
+function logout(){localStorage.removeItem('getdocpro_session');document.getElementById('userbar').classList.remove('show')}
+const session=localStorage.getItem('getdocpro_session');if(session)showUser(session);
 </script>
 </body>
 </html>
